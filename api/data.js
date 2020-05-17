@@ -13,7 +13,7 @@ router.get('/mine', function (req, res, next) {
 
   (async () => {
     try {
-      let browser = await puppeteer.launch({headless: true});
+      let browser = await puppeteer.launch({headless: true, args: ['--no-sandbox']});
       let page = await browser.newPage();
       await page.setViewport({width: 1920, height: 1080});
       await page.goto(url, {waitUntil: 'load', timeout: 0});
