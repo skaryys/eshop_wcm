@@ -69,14 +69,16 @@ router.get('/mine', function (req, res, next) {
         }
         if (tryNext) {
           let priceHandle_3 = await page.$x("//*[contains(@itemprop, \"price\")]");
-          let price_3 = await page.evaluate(el => el.innerHTML, priceHandle_3[0]);
-          if (!isNaN(parseFloat(price_3))) {
-            final_object["price"] = parseFloat(price_3.replace(/\s/g, "").replace("&nbsp;", ""));
-          } else {
-            let priceHandle_4 = await page.$x("//*[contains(@id, \"price\") or contains(@class, \"price\")][not(starts-with(text(), \"0\"))][not(contains(text(), \"Doprava\"))][not(contains(@class, \"prices\"))]");
-            let price_4 = await page.evaluate(el => el.innerHTML, priceHandle_4[0]);
-            if (!isNaN(striptags(price_4.replace("&nbsp;", "").replace(/\D/g, "")))) {
-              final_object["price"] = striptags(price_4.replace("&nbsp;", "").replace(/\D/g, ""));
+          if (priceHandle_3.length > 0) {
+            let price_3 = await page.evaluate(el => el.innerHTML, priceHandle_3[0]);
+            if (!isNaN(parseFloat(price_3))) {
+              final_object["price"] = parseFloat(price_3.replace(/\s/g, "").replace("&nbsp;", ""));
+            } else {
+              let priceHandle_4 = await page.$x("//*[contains(@id, \"price\") or contains(@class, \"price\")][not(starts-with(text(), \"0\"))][not(contains(text(), \"Doprava\"))][not(contains(@class, \"prices\"))]");
+              let price_4 = await page.evaluate(el => el.innerHTML, priceHandle_4[0]);
+              if (!isNaN(striptags(price_4.replace("&nbsp;", "").replace(/\D/g, "")))) {
+                final_object["price"] = striptags(price_4.replace("&nbsp;", "").replace(/\D/g, ""));
+              }
             }
           }
         }
@@ -116,18 +118,18 @@ router.get('/mine', function (req, res, next) {
       }
 
       //OBRÁZEK
-      let imgHandle_1 = await page.$x("//img[@src][contains(@alt, '"+final_object["name"]+"')]");
+      let imgHandle_1 = await page.$x("//img[@data-src][contains(@alt, '"+final_object["name"]+"')]");
       if (imgHandle_1.length > 0) {
-          let image_1 = await page.evaluate(el => el.getAttribute("src"), imgHandle_1[0]);
+          let image_1 = await page.evaluate(el => el.getAttribute("data-src"), imgHandle_1[0]);
           if (image_1.startsWith("http")) {
             final_object["image"] = image_1;
           } else {
             final_object["image"] = "http://" + psl.get(extractHostname(page.url())) + image_1;
           }
       } else {
-          let imgHandle_2 = await page.$x("//img[contains(@alt, '" +final_object["name"]+ "')][@data-src]");
+          let imgHandle_2 = await page.$x("//img[contains(@alt, '" +final_object["name"]+ "')][@src]");
           if (imgHandle_2.length > 0) {
-            let image_2 = await page.evaluate(el => el.getAttribute("data-src"), imgHandle_2[0]);
+            let image_2 = await page.evaluate(el => el.getAttribute("src"), imgHandle_2[0]);
             if (image_2.startsWith("http")) {
               final_object["image"] = image_2;
             } else {
@@ -135,36 +137,36 @@ router.get('/mine', function (req, res, next) {
             }
           } else {
             let nameWithoutProducer = final_object["name"].replace(final_object["producer"], "").trim();
-            let imgHandle_3 = await page.$x("//img[contains(@alt, '" + nameWithoutProducer + "')][@src]");
+            let imgHandle_3 = await page.$x("//img[contains(@alt, '" + nameWithoutProducer + "')][@data-src]");
             if (imgHandle_3.length > 0) {
-              let image_3 = await page.evaluate(el => el.getAttribute("src"), imgHandle_3[0]);
+              let image_3 = await page.evaluate(el => el.getAttribute("data-src"), imgHandle_3[0]);
               if (image_3.startsWith("http")) {
                 final_object["image"] = image_3;
               } else {
                 final_object["image"] = "http://" + psl.get(extractHostname(page.url())) + image_3;
               }
             } else {
-              let imgHandle_4 = await page.$x("//img[contains(@alt, '" + nameWithoutProducer + "')][@data-src]");
+              let imgHandle_4 = await page.$x("//img[contains(@alt, '" + nameWithoutProducer + "')][@src]");
               if (imgHandle_4.length > 0) {
-                let image_4 = await page.evaluate(el => el.getAttribute("data-src"), imgHandle_4[0]);
+                let image_4 = await page.evaluate(el => el.getAttribute("src"), imgHandle_4[0]);
                 if (image_4.startsWith("http")) {
                   final_object["image"] = image_4;
                 } else {
                   final_object["image"] = "http://" + psl.get(extractHostname(page.url())) + image_4;
                 }
               } else {
-                let imgHandle_5 = await page.$x("//*[contains(@itemprop, 'image')][@src]");
+                let imgHandle_5 = await page.$x("//*[contains(@itemprop, 'image')][@data-src]");
                 if (imgHandle_5.length > 0) {
-                  let image_5 = await page.evaluate(el => el.getAttribute("src"), imgHandle_5[0]);
+                  let image_5 = await page.evaluate(el => el.getAttribute("data-src"), imgHandle_5[0]);
                   if (image_5.startsWith("http")) {
                     final_object["image"] = image_5;
                   } else {
                     final_object["image"] = "http://" + psl.get(extractHostname(page.url())) + image_5;
                   }
                 } else {
-                  let imgHandle_6 = await page.$x("//*[contains(@itemprop, 'image')][@data-src]");
+                  let imgHandle_6 = await page.$x("//*[contains(@itemprop, 'image')][@src]");
                   if (imgHandle_6.length > 0) {
-                    let image_6 = await page.evaluate(el => el.getAttribute("data-src"), imgHandle_6[0]);
+                    let image_6 = await page.evaluate(el => el.getAttribute("src"), imgHandle_6[0]);
                     if (image_6.startsWith("http")) {
                       final_object["image"] = image_6;
                     } else {
